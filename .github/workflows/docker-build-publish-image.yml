@@ -35,7 +35,13 @@ jobs:
       - name: Get commit SHA
         id: get_sha
         run: echo "COMMIT_SHA=${GITHUB_SHA:10}" >> $GITHUB_ENV
+      - name: "Check for .env file existence"
+        id: check_env_file
+        uses: andstor/file-existence-action@v1
+        with:
+          files: ".env"
       - name: Set ENV variables from supplied .env file
+        if: steps.check_env_file.outputs.files_exists == 'true'
         run: cat .env >> $GITHUB_ENV
       - name: Build and Push Image to GitHub Packages
         uses: docker/build-push-action@v2
